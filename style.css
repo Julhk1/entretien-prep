@@ -1,0 +1,433 @@
+:root {
+  --ink: #101B2D;
+  --ink-soft: #24334C;
+  --paper: #FAF7F2;
+  --card: #FFFFFF;
+  --brass: #B08D57;
+  --brass-dark: #8C6D3F;
+  --text: #1A2333;
+  --muted: #616B78;
+  --border: #E4DFD3;
+  --border-soft: #ECE7DC;
+  --success: #2F6F4E;
+  --tag-technique: #8C6D3F;
+  --tag-psycho: #6B5B95;
+  --tag-situation: #A5493C;
+  --tag-leadership: #24334C;
+  --tag-culture: #2F6F4E;
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --font-display: "Source Serif 4", Georgia, serif;
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --max-w: 640px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  padding-bottom: 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.hidden { display: none !important; }
+
+/* ---------------- Topbar ---------------- */
+.topbar {
+  background: var(--ink);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.topbar-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+
+.brand-mark {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--brass);
+  display: inline-block;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.lang-toggle {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.35);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.lang-toggle:hover { border-color: #fff; }
+
+/* ---------------- Layout ---------------- */
+#app {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 28px 20px 0;
+}
+
+.view { animation: fadein 0.25s ease; }
+
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------- Home ---------------- */
+.kicker {
+  font-size: 0.8rem;
+  color: var(--brass-dark);
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  line-height: 1.25;
+  margin: 0 0 10px;
+  font-weight: 600;
+  max-width: 22ch;
+}
+
+.hero-sub {
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  margin: 0 0 28px;
+  max-width: 42ch;
+}
+
+.tiles {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tile {
+  position: relative;
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  padding: 22px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.tile:active { transform: scale(0.99); }
+
+.tile-tab {
+  position: absolute;
+  top: 0;
+  left: 22px;
+  width: 44px;
+  height: 6px;
+  border-radius: 0 0 4px 4px;
+}
+
+.tile-classic .tile-tab { background: var(--brass); }
+.tile-reflex .tile-tab { background: var(--ink-soft); }
+
+.tile-classic:hover { border-color: var(--brass); }
+.tile-reflex:hover { border-color: var(--ink-soft); }
+
+.tile-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.tile-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tile-desc {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.tile-meta {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--brass-dark);
+}
+
+.tile-reflex .tile-meta { color: var(--ink-soft); }
+
+.home-footnote {
+  margin-top: 26px;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------------- Game header ---------------- */
+.game-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--text);
+  padding: 4px 6px 4px 0;
+  line-height: 1;
+}
+
+.game-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+  flex: 1;
+}
+
+.game-progress {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.trash-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  font-size: 0.95rem;
+  padding: 5px 9px;
+  color: var(--muted);
+}
+
+.trash-btn:hover { border-color: var(--tag-situation); color: var(--tag-situation); }
+
+/* ---------------- Dots (game 1 progress) ---------------- */
+.dots {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.dot.is-done { background: var(--brass); }
+.dot.is-current { background: var(--ink); }
+
+/* ---------------- Reflex progress ---------------- */
+.reflex-progress {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0 0 16px;
+}
+
+/* ---------------- Question card ---------------- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  padding: 24px 20px;
+  margin-bottom: 22px;
+}
+
+.cat-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  color: #fff;
+}
+
+.card-question {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.5;
+  font-weight: 600;
+  margin: 0 0 18px;
+}
+
+.reveal-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  padding: 9px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.reveal-btn:hover { border-color: var(--brass); color: var(--brass-dark); }
+
+.answer-list {
+  margin: 16px 0 0;
+  padding: 16px 0 0 0;
+  border-top: 1px solid var(--border-soft);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.answer-list li {
+  position: relative;
+  padding-left: 16px;
+  font-size: 0.93rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.answer-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brass);
+}
+
+.example-text {
+  margin: 16px 0 0;
+  padding: 16px 0 0 0;
+  border-top: 1px solid var(--border-soft);
+  font-size: 0.93rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* ---------------- Actions ---------------- */
+.game-actions {
+  display: flex;
+}
+
+.game-actions-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn {
+  border: none;
+  border-radius: var(--radius-s);
+  padding: 13px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  width: 100%;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: #fff;
+}
+
+.btn-primary:hover { background: var(--ink-soft); }
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+/* ---------------- End / empty states ---------------- */
+.end-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  padding: 32px 22px;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.end-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  margin: 0 0 10px;
+}
+
+.end-sub {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+.end-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------------- Responsive ---------------- */
+@media (min-width: 640px) {
+  .hero-title { font-size: 2.3rem; }
+  .tiles { flex-direction: row; }
+  .tile { flex: 1; }
+  .game-actions-col { flex-direction: row; }
+  .game-actions-col .btn { width: auto; flex: 1; }
+  .end-actions { flex-direction: row; justify-content: center; }
+  .end-actions .btn { width: auto; padding-left: 26px; padding-right: 26px; }
+}
+
+/* focus visibility */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
