@@ -169,9 +169,11 @@ button {
 
 .tile-classic .tile-tab { background: var(--brass); }
 .tile-reflex .tile-tab { background: var(--ink-soft); }
+.tile-persona .tile-tab { background: var(--tag-situation); }
 
 .tile-classic:hover { border-color: var(--brass); }
 .tile-reflex:hover { border-color: var(--ink-soft); }
+.tile-persona:hover { border-color: var(--tag-situation); }
 
 .tile-label {
   font-size: 0.72rem;
@@ -201,6 +203,53 @@ button {
 }
 
 .tile-reflex .tile-meta { color: var(--ink-soft); }
+.tile-persona .tile-meta { color: var(--tag-situation); }
+
+/* ---------------- Persona selection ---------------- */
+.persona-intro {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 18px;
+}
+
+.persona-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.persona-card {
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: var(--radius-m);
+  padding: 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.15s ease;
+}
+
+.persona-name {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.persona-desc {
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.persona-drh { border-left-color: var(--tag-leadership); }
+.persona-drh:hover { border-color: var(--tag-leadership); border-left-color: var(--tag-leadership); }
+.persona-cfo { border-left-color: var(--tag-technique); }
+.persona-cfo:hover { border-color: var(--tag-technique); border-left-color: var(--tag-technique); }
+.persona-ceo { border-left-color: var(--tag-situation); }
+.persona-ceo:hover { border-color: var(--tag-situation); border-left-color: var(--tag-situation); }
 
 .home-footnote {
   margin-top: 26px;
