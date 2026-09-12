@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dossier — Préparation entretien</title>
+<meta name="description" content="Préparation d'entretien pour postes RAF, DAF, Finance Manager et FP&A.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name" data-i18n="brandName">Dossier</span>
+    </div>
+    <button class="lang-toggle" id="langToggle" type="button" aria-label="Changer de langue">FR / EN</button>
+  </div>
+</header>
+
+<main id="app">
+
+  <!-- ===================== HOME ===================== -->
+  <section id="view-home" class="view view-home">
+    <p class="kicker" data-i18n="homeKicker">Préparation entretien — RAF · DAF · FP&amp;A</p>
+    <h1 class="hero-title" data-i18n="homeTitle">Entraînez vos réponses avant le jour J.</h1>
+    <p class="hero-sub" data-i18n="homeSub">Deux modes d'entraînement. Sur mobile, dans le bus, entre deux réunions.</p>
+
+    <div class="tiles">
+      <button class="tile tile-classic" id="startGame1" type="button">
+        <span class="tile-tab"></span>
+        <span class="tile-label" data-i18n="tile1Label">Mode 1</span>
+        <span class="tile-title" data-i18n="tile1Title">Entretien classique</span>
+        <span class="tile-desc" data-i18n="tile1Desc">5 questions tirées au sort parmi les 19 questions clés d'un entretien RAF/DAF. Réponse de référence disponible pour chacune.</span>
+        <span class="tile-meta" id="tile1Meta">19 <span data-i18n="questionsWord">questions</span></span>
+      </button>
+
+      <button class="tile tile-reflex" id="startGame2" type="button">
+        <span class="tile-tab"></span>
+        <span class="tile-label" data-i18n="tile2Label">Mode 2</span>
+        <span class="tile-title" data-i18n="tile2Title">Réflexe</span>
+        <span class="tile-desc" data-i18n="tile2Desc">Une question à la fois, piochée dans une grande banque : technique, psychologique, mise en situation, management. Jamais deux fois la même question tant que vous n'avez pas remis le compteur à zéro.</span>
+        <span class="tile-meta" id="tile2Meta"></span>
+      </button>
+    </div>
+
+    <p class="home-footnote" data-i18n="homeFootnote">Votre progression est enregistrée uniquement sur cet appareil.</p>
+  </section>
+
+  <!-- ===================== GAME 1 : CLASSIQUE ===================== -->
+  <section id="view-game1" class="view view-game hidden">
+    <div class="game-header">
+      <button class="back-btn" id="g1Back" type="button" aria-label="Retour">←</button>
+      <span class="game-title" data-i18n="tile1Title">Entretien classique</span>
+      <span class="game-progress" id="g1Progress">1 / 5</span>
+    </div>
+
+    <div class="dots" id="g1Dots" aria-hidden="true"></div>
+
+    <div class="card question-card" id="g1Card">
+      <p class="card-question" id="g1Question"></p>
+      <button class="reveal-btn" id="g1RevealBtn" type="button" data-i18n="revealAnswer">Voir ma réponse</button>
+      <ul class="answer-list hidden" id="g1AnswerList"></ul>
+    </div>
+
+    <div class="game-actions">
+      <button class="btn btn-primary" id="g1Next" type="button" data-i18n="nextQuestion">Question suivante</button>
+    </div>
+  </section>
+
+  <!-- ===================== GAME 1 : END ===================== -->
+  <section id="view-game1-end" class="view view-game hidden">
+    <div class="end-card">
+      <h2 class="end-title" data-i18n="endTitle1">Série terminée.</h2>
+      <p class="end-sub" data-i18n="endSub1">5 nouvelles questions vous attendent à tout moment.</p>
+      <div class="end-actions">
+        <button class="btn btn-primary" id="g1Restart" type="button" data-i18n="playAgain">Rejouer</button>
+        <button class="btn btn-ghost" id="g1Home" type="button" data-i18n="backHome">Retour à l'accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GAME 2 : RÉFLEXE ===================== -->
+  <section id="view-game2" class="view view-game hidden">
+    <div class="game-header">
+      <button class="back-btn" id="g2Back" type="button" aria-label="Retour">←</button>
+      <span class="game-title" data-i18n="tile2Title">Réflexe</span>
+      <button class="trash-btn" id="g2Trash" type="button" aria-label="Réinitialiser la mémoire" title="Réinitialiser la mémoire">🗑</button>
+    </div>
+
+    <p class="reflex-progress" id="g2Progress"></p>
+
+    <div class="card question-card" id="g2Card">
+      <span class="cat-tag" id="g2CatTag"></span>
+      <p class="card-question" id="g2Question"></p>
+      <button class="reveal-btn" id="g2RevealBtn" type="button" data-i18n="revealExample">Voir un exemple de réponse</button>
+      <p class="example-text hidden" id="g2Example"></p>
+    </div>
+
+    <div class="game-actions game-actions-col">
+      <button class="btn btn-primary" id="g2Next" type="button" data-i18n="nextQuestion">Question suivante</button>
+      <button class="btn btn-ghost" id="g2Stop" type="button" data-i18n="stopHere">M'arrêter là</button>
+    </div>
+  </section>
+
+  <!-- ===================== GAME 2 : BANQUE ÉPUISÉE ===================== -->
+  <section id="view-game2-empty" class="view view-game hidden">
+    <div class="end-card">
+      <h2 class="end-title" data-i18n="emptyTitle">Vous avez fait le tour de la banque.</h2>
+      <p class="end-sub" data-i18n="emptySub">Toutes les questions ont déjà été posées sur cet appareil. Réinitialisez la mémoire pour recommencer depuis le début.</p>
+      <div class="end-actions">
+        <button class="btn btn-primary" id="g2EmptyReset" type="button" data-i18n="resetMemory">Réinitialiser la mémoire</button>
+        <button class="btn btn-ghost" id="g2EmptyHome" type="button" data-i18n="backHome">Retour à l'accueil</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="questions.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
