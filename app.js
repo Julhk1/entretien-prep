@@ -38,7 +38,18 @@ const I18N = {
       situation: "Mise en situation",
       leadership: "Management",
       culture: "Culture & repères"
-    }
+    },
+    tile3Label: "Mode 3",
+    tile3Title: "Face à face",
+    tile3Desc: "Choisissez qui est en face de vous — DRH, DAF/CFO ou CEO — et entraînez-vous sur les questions et cas propres à chaque interlocuteur.",
+    personaIntro: "Qui interviewe aujourd'hui ?",
+    personaDrhName: "DRH",
+    personaDrhDesc: "Management, conflits, recrutement, conduite du changement.",
+    personaCfoName: "DAF / CFO",
+    personaCfoDesc: "Cas techniques : trésorerie, marge, BFR, pilotage financier.",
+    personaCeoName: "CEO",
+    personaCeoDesc: "Décisions stratégiques, arbitrages, vision business.",
+    personaLabels: { drh: "DRH", cfo: "DAF / CFO", ceo: "CEO" }
   },
   en: {
     brandName: "Dossier",
@@ -74,7 +85,18 @@ const I18N = {
       situation: "Scenario",
       leadership: "Leadership",
       culture: "Culture & awareness"
-    }
+    },
+    tile3Label: "Mode 3",
+    tile3Title: "Face to face",
+    tile3Desc: "Choose who's across the table — HR Director, CFO, or CEO — and train on the questions and cases specific to each.",
+    personaIntro: "Who's interviewing you today?",
+    personaDrhName: "HR Director",
+    personaDrhDesc: "Management, conflict, hiring, change management.",
+    personaCfoName: "CFO",
+    personaCfoDesc: "Technical cases: cash, margin, working capital, financial steering.",
+    personaCeoName: "CEO",
+    personaCeoDesc: "Strategic decisions, trade-offs, business vision.",
+    personaLabels: { drh: "HR Director", cfo: "CFO", ceo: "CEO" }
   }
 };
 
@@ -89,7 +111,27 @@ const CAT_COLOR = {
 const STORAGE_LANG = "ip_lang";
 const STORAGE_REFLEX_SEEN = "ip_reflex_seen";
 
-let currentLang = localStorage.getItem(STORAGE_LANG) || "fr";
+// Certains navigateurs / réglages de confidentialité bloquent localStorage
+// (mode privé strict, extensions, Brave Shields...). Ce repli en mémoire
+// garantit que le site reste utilisable même dans ce cas — la progression
+// ne sera simplement pas conservée après fermeture de l'onglet.
+const memoryStore = {};
+const safeStorage = {
+  getItem(key) {
+    try { return localStorage.getItem(key); }
+    catch (e) { return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : null; }
+  },
+  setItem(key, value) {
+    try { localStorage.setItem(key, value); }
+    catch (e) { memoryStore[key] = value; }
+  },
+  removeItem(key) {
+    try { localStorage.removeItem(key); }
+    catch (e) { delete memoryStore[key]; }
+  }
+};
+
+let currentLang = safeStorage.getItem(STORAGE_LANG) || "fr";
 
 function t(key) {
   return I18N[currentLang][key];
@@ -105,13 +147,18 @@ function applyI18n() {
   document.getElementById("tile1Meta").innerHTML =
     `${STAR_QUESTIONS.length} <span>${t("questionsWord")}</span>`;
   renderReflexMeta();
+  renderTile3Meta();
   // Refresh whichever game view is currently visible, so labels/content re-render in the new language
   if (!document.getElementById("view-game1").classList.contains("hidden")) renderG1Question();
   if (!document.getElementById("view-game2").classList.contains("hidden")) renderG2Question();
+  if (!document.getElementById("view-game3").classList.contains("hidden")) renderG3Question();
 }
 
 // ---------------- Navigation ----------------
-const views = ["view-home", "view-game1", "view-game1-end", "view-game2", "view-game2-empty"];
+const views = [
+  "view-home", "view-game1", "view-game1-end", "view-game2", "view-game2-empty",
+  "view-persona-select", "view-game3", "view-game3-empty"
+];
 
 function showView(id) {
   views.forEach(v => {
@@ -122,7 +169,7 @@ function showView(id) {
 
 document.getElementById("langToggle").addEventListener("click", () => {
   currentLang = currentLang === "fr" ? "en" : "fr";
-  localStorage.setItem(STORAGE_LANG, currentLang);
+  safeStorage.setItem(STORAGE_LANG, currentLang);
   applyI18n();
 });
 
@@ -204,7 +251,7 @@ let g2Current = null;
 
 function getSeenIds() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_REFLEX_SEEN)) || [];
+    return JSON.parse(safeStorage.getItem(STORAGE_REFLEX_SEEN)) || [];
   } catch (e) {
     return [];
   }
@@ -292,6 +339,129 @@ document.getElementById("g2EmptyReset").addEventListener("click", () => {
   startGame2();
 });
 document.getElementById("g2EmptyHome").addEventListener("click", () => showView("view-home"));
+
+// ================================================================
+// JEU 3 — Face à face (par profil : DRH / CFO / CEO)
+// ================================================================
+const PERSONA_COLOR = {
+  drh: "var(--tag-leadership)",
+  cfo: "var(--tag-technique)",
+  ceo: "var(--tag-situation)"
+};
+
+let currentPersona = null;
+let g3Current = null;
+
+function personaStorageKey(persona) {
+  return `ip_persona_seen_${persona}`;
+}
+
+function getPersonaBank(persona) {
+  return PERSONA_QUESTIONS.filter(q => q.persona === persona);
+}
+
+function getPersonaSeenIds(persona) {
+  try {
+    return JSON.parse(safeStorage.getItem(personaStorageKey(persona))) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function addPersonaSeenId(persona, id) {
+  const seen = getPersonaSeenIds(persona);
+  if (!seen.includes(id)) {
+    seen.push(id);
+    safeStorage.setItem(personaStorageKey(persona), JSON.stringify(seen));
+  }
+}
+
+function resetPersonaSeen(persona) {
+  safeStorage.removeItem(personaStorageKey(persona));
+}
+
+function renderTile3Meta() {
+  document.getElementById("tile3Meta").innerHTML =
+    `${PERSONA_QUESTIONS.length} <span>${t("questionsWord")}</span>`;
+}
+
+function openPersonaSelect() {
+  showView("view-persona-select");
+}
+
+function pickNextPersonaQuestion(persona) {
+  const bank = getPersonaBank(persona);
+  const seen = getPersonaSeenIds(persona);
+  const remaining = bank.filter(q => !seen.includes(q.id));
+  if (remaining.length === 0) return null;
+  return remaining[Math.floor(Math.random() * remaining.length)];
+}
+
+function renderG3Progress() {
+  const total = getPersonaBank(currentPersona).length;
+  const seen = getPersonaSeenIds(currentPersona).length;
+  document.getElementById("g3Progress").textContent = t("seenOf")(seen, total);
+}
+
+function renderG3Question() {
+  if (!g3Current) return;
+  document.getElementById("g3Title").textContent = t("personaLabels")[currentPersona];
+  const tag = document.getElementById("g3PersonaTag");
+  tag.textContent = t("personaLabels")[currentPersona];
+  tag.style.background = PERSONA_COLOR[currentPersona];
+  document.getElementById("g3Question").textContent = g3Current[currentLang].q;
+  const ex = document.getElementById("g3Example");
+  ex.textContent = g3Current[currentLang].example;
+  ex.classList.add("hidden");
+  document.getElementById("g3RevealBtn").textContent = t("revealExample");
+  renderG3Progress();
+}
+
+function startGame3(persona) {
+  currentPersona = persona;
+  const next = pickNextPersonaQuestion(persona);
+  if (!next) {
+    document.getElementById("g3Title").textContent = t("personaLabels")[currentPersona];
+    showView("view-game3-empty");
+    return;
+  }
+  g3Current = next;
+  addPersonaSeenId(persona, next.id);
+  showView("view-game3");
+  renderG3Question();
+}
+
+document.getElementById("startGame3").addEventListener("click", openPersonaSelect);
+document.getElementById("pSelectBack").addEventListener("click", () => showView("view-home"));
+document.getElementById("pickDrh").addEventListener("click", () => startGame3("drh"));
+document.getElementById("pickCfo").addEventListener("click", () => startGame3("cfo"));
+document.getElementById("pickCeo").addEventListener("click", () => startGame3("ceo"));
+
+document.getElementById("g3Back").addEventListener("click", () => showView("view-home"));
+document.getElementById("g3Stop").addEventListener("click", () => showView("view-home"));
+
+document.getElementById("g3RevealBtn").addEventListener("click", () => {
+  const ex = document.getElementById("g3Example");
+  const btn = document.getElementById("g3RevealBtn");
+  const isHidden = ex.classList.contains("hidden");
+  ex.classList.toggle("hidden");
+  btn.textContent = isHidden ? t("hideExample") : t("revealExample");
+});
+
+document.getElementById("g3Next").addEventListener("click", () => startGame3(currentPersona));
+
+document.getElementById("g3Trash").addEventListener("click", () => {
+  if (confirm(t("resetConfirm"))) {
+    resetPersonaSeen(currentPersona);
+    renderG3Progress();
+  }
+});
+
+document.getElementById("g3EmptyReset").addEventListener("click", () => {
+  resetPersonaSeen(currentPersona);
+  startGame3(currentPersona);
+});
+document.getElementById("g3EmptyHome").addEventListener("click", () => showView("view-home"));
 
 // ---------------- Init ----------------
 applyI18n();
