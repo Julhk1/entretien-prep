@@ -49,7 +49,39 @@
       </button>
     </div>
 
+      <button class="tile tile-persona" id="startGame3" type="button">
+        <span class="tile-tab"></span>
+        <span class="tile-label" data-i18n="tile3Label">Mode 3</span>
+        <span class="tile-title" data-i18n="tile3Title">Face à face</span>
+        <span class="tile-desc" data-i18n="tile3Desc">Choisissez qui est en face de vous — DRH, DAF/CFO ou CEO — et entraînez-vous sur les questions et cas propres à chaque interlocuteur.</span>
+        <span class="tile-meta" id="tile3Meta"></span>
+      </button>
+    </div>
+
     <p class="home-footnote" data-i18n="homeFootnote">Votre progression est enregistrée uniquement sur cet appareil.</p>
+  </section>
+
+  <!-- ===================== PERSONA : SÉLECTION ===================== -->
+  <section id="view-persona-select" class="view view-game hidden">
+    <div class="game-header">
+      <button class="back-btn" id="pSelectBack" type="button" aria-label="Retour">←</button>
+      <span class="game-title" data-i18n="tile3Title">Face à face</span>
+    </div>
+    <p class="persona-intro" data-i18n="personaIntro">Qui interviewe aujourd'hui ?</p>
+    <div class="persona-list">
+      <button class="persona-card persona-drh" id="pickDrh" type="button">
+        <span class="persona-name" data-i18n="personaDrhName">DRH</span>
+        <span class="persona-desc" data-i18n="personaDrhDesc">Management, conflits, recrutement, conduite du changement.</span>
+      </button>
+      <button class="persona-card persona-cfo" id="pickCfo" type="button">
+        <span class="persona-name" data-i18n="personaCfoName">DAF / CFO</span>
+        <span class="persona-desc" data-i18n="personaCfoDesc">Cas techniques : trésorerie, marge, BFR, pilotage financier.</span>
+      </button>
+      <button class="persona-card persona-ceo" id="pickCeo" type="button">
+        <span class="persona-name" data-i18n="personaCeoName">CEO</span>
+        <span class="persona-desc" data-i18n="personaCeoDesc">Décisions stratégiques, arbitrages, vision business.</span>
+      </button>
+    </div>
   </section>
 
   <!-- ===================== GAME 1 : CLASSIQUE ===================== -->
@@ -116,6 +148,41 @@
       <div class="end-actions">
         <button class="btn btn-primary" id="g2EmptyReset" type="button" data-i18n="resetMemory">Réinitialiser la mémoire</button>
         <button class="btn btn-ghost" id="g2EmptyHome" type="button" data-i18n="backHome">Retour à l'accueil</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GAME 3 : FACE À FACE ===================== -->
+  <section id="view-game3" class="view view-game hidden">
+    <div class="game-header">
+      <button class="back-btn" id="g3Back" type="button" aria-label="Retour">←</button>
+      <span class="game-title" id="g3Title">DRH</span>
+      <button class="trash-btn" id="g3Trash" type="button" aria-label="Réinitialiser la mémoire" title="Réinitialiser la mémoire">🗑</button>
+    </div>
+
+    <p class="reflex-progress" id="g3Progress"></p>
+
+    <div class="card question-card" id="g3Card">
+      <span class="cat-tag" id="g3PersonaTag"></span>
+      <p class="card-question" id="g3Question"></p>
+      <button class="reveal-btn" id="g3RevealBtn" type="button" data-i18n="revealExample">Voir un exemple de réponse</button>
+      <p class="example-text hidden" id="g3Example"></p>
+    </div>
+
+    <div class="game-actions game-actions-col">
+      <button class="btn btn-primary" id="g3Next" type="button" data-i18n="nextQuestion">Question suivante</button>
+      <button class="btn btn-ghost" id="g3Stop" type="button" data-i18n="stopHere">M'arrêter là</button>
+    </div>
+  </section>
+
+  <!-- ===================== GAME 3 : BANQUE ÉPUISÉE ===================== -->
+  <section id="view-game3-empty" class="view view-game hidden">
+    <div class="end-card">
+      <h2 class="end-title" data-i18n="emptyTitle">Vous avez fait le tour de la banque.</h2>
+      <p class="end-sub" data-i18n="emptySub">Toutes les questions ont déjà été posées sur cet appareil. Réinitialisez la mémoire pour recommencer depuis le début.</p>
+      <div class="end-actions">
+        <button class="btn btn-primary" id="g3EmptyReset" type="button" data-i18n="resetMemory">Réinitialiser la mémoire</button>
+        <button class="btn btn-ghost" id="g3EmptyHome" type="button" data-i18n="backHome">Retour à l'accueil</button>
       </div>
     </div>
   </section>
