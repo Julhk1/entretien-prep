@@ -11,7 +11,7 @@ const I18N = {
     homeSub: "Deux modes d'entraînement. Sur mobile, dans le bus, entre deux réunions.",
     tile1Label: "Mode 1",
     tile1Title: "Entretien classique",
-    tile1Desc: "5 questions tirées au sort parmi les 19 questions clés d'un entretien RAF/DAF. Réponse de référence disponible pour chacune.",
+    tile1Desc: "5 questions par série : 4 tirées au sort parmi les 19 questions clés d'un entretien RAF/DAF, et 1 question \"donnez-moi un exemple\" tirée d'une banque de situations vécues. Réponse de référence disponible pour chacune.",
     tile2Label: "Mode 2",
     tile2Title: "Réflexe",
     tile2Desc: "Une question à la fois, piochée dans une grande banque : technique, psychologique, mise en situation, management. Jamais deux fois la même question tant que vous n'avez pas remis le compteur à zéro.",
@@ -58,7 +58,7 @@ const I18N = {
     homeSub: "Two training modes. On your phone, on the bus, between meetings.",
     tile1Label: "Mode 1",
     tile1Title: "Classic interview",
-    tile1Desc: "5 random questions from the 19 core questions of a Finance Director interview. A reference answer is available for each.",
+    tile1Desc: "5 questions per round: 4 drawn from the 19 core Finance Director interview questions, plus 1 \"give me an example\" question drawn from a bank of real situations. A reference answer is available for each.",
     tile2Label: "Mode 2",
     tile2Title: "Reflex",
     tile2Desc: "One question at a time, drawn from a large bank: technical, psychological, scenario-based, management. Never the same question twice until you reset the counter.",
@@ -145,7 +145,7 @@ function applyI18n() {
     if (typeof val === "string") el.textContent = val;
   });
   document.getElementById("tile1Meta").innerHTML =
-    `${STAR_QUESTIONS.length} <span>${t("questionsWord")}</span>`;
+    `${STAR_QUESTIONS.length + EXAMPLE_QUESTIONS.length} <span>${t("questionsWord")}</span>`;
   renderReflexMeta();
   renderTile3Meta();
   // Refresh whichever game view is currently visible, so labels/content re-render in the new language
@@ -190,7 +190,11 @@ function pickRandom(arr, n) {
 }
 
 function startGame1() {
-  g1Set = pickRandom(STAR_QUESTIONS, 5);
+  const classicPicks = pickRandom(STAR_QUESTIONS, 4);
+  const examplePick = pickRandom(EXAMPLE_QUESTIONS, 1);
+  // pickRandom sur l'ensemble complet mélange aussi l'ordre des 5 questions,
+  // pour que la question "exemple" ne tombe pas toujours au même endroit.
+  g1Set = pickRandom(classicPicks.concat(examplePick), 5);
   g1Index = 0;
   showView("view-game1");
   renderG1Question();
