@@ -373,134 +373,133 @@ const STAR_QUESTIONS = [
 ];
 
 // ----------------------------------------------------------------
-// JEU 1 (bis) — Questions "exemple concret" (banque fixe de 6)
-// Type "racontez-moi une fois où...". Piochées 1 par série dans le
-// Mode 1, en complément des 4 questions classiques ci-dessus.
+// JEU 1 (bis) — Banque "exemples concrets" (questions type
+// "Donnez-moi un exemple d'une fois où...") — vos propres expériences.
+// Une question de ce type est piochée à chaque partie du mode Classique,
+// en plus de 4 questions de STAR_QUESTIONS.
 // ----------------------------------------------------------------
-const EXAMPLE_QUESTIONS = [
+const STAR_EXAMPLES = [
   {
-    id: "ex01",
+    id: "x01",
     fr: {
-      q: "Racontez-moi une erreur importante — pas forcément la vôtre — que vous avez détectée et fait corriger.",
+      q: "Donnez-moi un exemple d'une fois où vous avez détecté et corrigé une erreur importante.",
       a: [
-        "Comptabilité externalisée : je ne me contente pas d'attendre la clôture annuelle, je demande un suivi comptable régulier, au moins chaque trimestre",
-        "Je tiens mon propre fichier de suivi (compte de résultat, bilan, PCA/CCA, charges à payer, encaissements) que je compare aux chiffres transmis par le cabinet",
-        "Cette comparaison m'a permis à plusieurs reprises de détecter des écarts ou des éléments mal comptabilisés, et de les faire corriger",
-        "Objectif : détecter tôt plutôt qu'à la clôture annuelle, où les problèmes deviennent bien plus difficiles à analyser et corriger"
+        "Comptabilité externalisée : je ne me contente pas d'attendre la clôture annuelle, je demande un suivi comptable chaque trimestre",
+        "Je tiens mon propre fichier de suivi (compte de résultat, bilan, factures, PCA/CCA, charges à payer) que je compare aux chiffres transmis par le cabinet",
+        "Cette comparaison régulière m'a permis à plusieurs reprises de détecter des écarts et des éléments mal comptabilisés",
+        "Objectif : détecter tôt — une erreur découverte seulement à la clôture annuelle est bien plus difficile à analyser et corriger"
       ]
     },
     en: {
-      q: "Tell me about a significant error — not necessarily your own — that you caught and had corrected.",
+      q: "Give me an example of a time you caught and corrected an important mistake.",
       a: [
-        "Our accounting is outsourced, so I don't just wait for the annual close — I ask for a regular review, at least quarterly",
-        "I keep my own tracking file (P&L, balance sheet, deferred/accrued items, accrued expenses, cash receipts) and compare it against the figures the accounting firm sends",
-        "That comparison has repeatedly let me catch discrepancies or items that were booked incorrectly, and get them fixed",
-        "Goal: catch issues early rather than at the annual close, where problems become much harder to analyze and correct"
+        "Since accounting is outsourced, I don't wait for the annual closing — I request a review with the firm every quarter",
+        "I keep my own tracking file (P&L, balance sheet, invoices, accruals/deferrals, payables) that I compare against the figures from the accounting firm",
+        "This regular comparison has repeatedly let me catch discrepancies and items that were booked incorrectly",
+        "Goal: catch issues early — a mistake found only at year-end closing is far harder to analyze and fix"
       ]
     }
   },
   {
-    id: "ex02",
+    id: "x02",
     fr: {
-      q: "Décrivez un processus que vous avez amélioré, ou un autre que vous avez automatisé.",
+      q: "Donnez-moi un exemple d'un processus que vous avez amélioré ou automatisé.",
       a: [
-        "Amélioré : le reporting — structure et fiabilité des chiffres transmis à la direction",
-        "Automatisé : le processus de facturation chez un précédent employeur (Wekiwi), pour fiabiliser et accélérer un flux auparavant géré manuellement",
-        "Résultat : gain de temps sur des tâches répétitives et réduction du risque d'erreur"
+        "Chez Wekiwi : amélioration en profondeur du reporting financier pour le rendre plus fiable et plus rapide à produire",
+        "En parallèle, automatisation du processus de facturation pour réduire les tâches manuelles répétitives",
+        "Résultat : moins de risque d'erreur humaine et du temps libéré pour de l'analyse à plus forte valeur ajoutée"
       ]
     },
     en: {
-      q: "Describe a process you improved, or a different one you automated.",
+      q: "Give me an example of a process you improved or automated.",
       a: [
-        "Improved: reporting — the structure and reliability of the figures shared with leadership",
-        "Automated: the invoicing process at a previous employer (Wekiwi), to make a previously manual flow faster and more reliable",
-        "Result: time saved on repetitive tasks and a lower risk of error"
+        "At Wekiwi: a deep improvement of financial reporting to make it more reliable and faster to produce",
+        "In parallel, automation of the invoicing process to cut down repetitive manual tasks",
+        "Result: less risk of human error and more time freed up for higher-value analysis"
       ]
     }
   },
   {
-    id: "ex03",
+    id: "x03",
     fr: {
-      q: "Racontez-moi un écart important que vous avez constaté entre deux sources de données financières.",
+      q: "Racontez-moi une fois où vous avez identifié un écart important entre deux sources de données.",
       a: [
-        "Je tiens mon propre suivi du compte de résultat, avec le détail qui permet d'expliquer chaque poste",
-        "Quand je constate un écart avec la comptabilité — notamment sur le chiffre d'affaires, les PCA ou les CCA — je croise mon fichier avec celui du cabinet pour identifier les différences",
+        "Je maintiens mon propre suivi détaillé du compte de résultat, avec le détail qui permet d'expliquer chaque poste",
+        "En cas d'écart avec la comptabilité (chiffre d'affaires, PCA, CCA), je croise mon fichier avec celui du cabinet pour isoler la différence",
         "J'analyse chaque écart pour en comprendre l'origine, puis je demande une correction au cabinet si nécessaire",
-        "Particulièrement important chez Wedocom, qui vend beaucoup de licences annuelles : les PCA et la reconnaissance des revenus doivent être suivis avec rigueur"
+        "Particulièrement critique chez nous : on vend beaucoup de licences annuelles, donc les PCA et la reconnaissance du revenu doivent être suivis avec rigueur"
       ]
     },
     en: {
-      q: "Tell me about a significant discrepancy you found between two financial data sources.",
+      q: "Tell me about a time you spotted a significant discrepancy between two data sources.",
       a: [
-        "I keep my own P&L tracking file, detailed enough to explain every line item",
-        "When I spot a gap with the accounting figures — especially on revenue, deferred or accrued items — I cross-check my file against the accounting firm's to pinpoint the differences",
-        "I analyze each discrepancy to understand its source, then request a correction from the firm if needed",
-        "Especially important at Wedocom, which sells a lot of annual licenses: deferred revenue and revenue recognition need to be tracked rigorously"
+        "I keep my own detailed P&L tracking, with enough detail to explain every line",
+        "When there's a gap with the accounting figures (revenue, accruals, deferrals), I cross-check my file against the accounting firm's to isolate the difference",
+        "I analyze each discrepancy to understand its origin, then request a correction from the firm if needed",
+        "Especially critical for us since we sell a lot of annual licenses, so deferred revenue has to be tracked rigorously"
       ]
     }
   },
   {
-    id: "ex04",
+    id: "x04",
     fr: {
-      q: "Décrivez un problème de facturation que vous avez résolu.",
+      q: "Donnez-moi un exemple d'un problème de facturation que vous avez résolu.",
       a: [
-        "En faisant mes prévisions, j'ai remarqué que le nombre de factures sorties était inférieur à ce qu'annonçaient les nouveaux clients enregistrés côté commercial et partenaires",
-        "J'ai sorti la liste complète des clients et celle des lots de facturation, et croisé les deux : environ 1000 clients manquaient",
-        "En comparant les contrats et les infos de ces clients, j'ai identifié un point commun venant de plusieurs partenaires commerciaux : un bug lié à un code promo utilisé sur cette période bloquait la facturation",
-        "J'ai fait continuer un collègue sur le lot initial pour ne pas perturber le processus en cours, pendant que je traitais le sujet, puis j'ai ajouté une étape de vérification au processus"
+        "En comparant mes prévisions de facturation aux lots réellement sortis, j'ai détecté un écart important : environ 1000 clients manquants par rapport à l'attendu",
+        "J'ai croisé la liste des clients enregistrés avec la liste des lots de facturation sortis pour isoler les dossiers concernés",
+        "En cherchant le point commun entre ces clients (plusieurs partenaires commerciaux), j'ai identifié un bug lié à un code promo qui bloquait leur facturation",
+        "J'ai sécurisé le lot de facturation en cours avec mon collègue pendant que je corrigeais le bug, puis j'ai ajouté une étape de vérification au processus pour éviter que ça se reproduise"
       ]
     },
     en: {
-      q: "Describe an invoicing problem you resolved.",
+      q: "Give me an example of a billing issue you resolved.",
       a: [
-        "While building my forecasts, I noticed the number of invoices issued was lower than what new clients registered by sales and partners would suggest",
-        "I pulled the full client list and the list of invoicing batches, cross-referenced them, and found around 1,000 missing clients",
-        "Comparing contracts and details across those clients, I found a common thread from several commercial partners: a bug tied to a promo code used during that period was blocking invoicing",
-        "I had a colleague keep working the original batch so the ongoing process wasn't disrupted, while I dug into the issue, then added a verification step to the process"
+        "By comparing my invoicing forecasts to the batches actually issued, I spotted a major gap: roughly 1,000 missing customers versus what was expected",
+        "I cross-referenced the registered customer list against the issued invoice batches to isolate the affected accounts",
+        "Looking for what these customers had in common (several sales partners), I traced it to a promo-code bug blocking their invoicing",
+        "I had my colleague keep the current batch running safely while I fixed the bug, then added a verification step to the process to prevent it happening again"
       ]
     }
   },
   {
-    id: "ex05",
+    id: "x05",
     fr: {
-      q: "Racontez-moi un problème de trésorerie ou de recouvrement que vous avez géré.",
+      q: "Racontez-moi une fois où vous avez amélioré une situation de trésorerie ou de recouvrement.",
       a: [
-        "À mon arrivée chez Wedocom, j'ai analysé la trésorerie et l'historique de recouvrement : taux de recouvrement bas, trésorerie faible, retards de paiement fournisseurs",
-        "J'ai découvert que les relances clients étaient faites manuellement, client par client, sans vrai suivi",
-        "J'ai paramétré et activé les relances automatiques dans notre outil de facturation, calées sur les délais de paiement contractuels (30, 45, 45 fin de mois, 60 jours) pour ne pas créer de friction commerciale",
-        "Au-delà de 3 relances, je reçois une notification et je contacte personnellement le client pour comprendre le blocage",
-        "Résultat : baisse nette du taux d'impayés, trésorerie améliorée, fournisseurs payés à temps, et excédent placé sur un compte à terme"
+        "À mon arrivée, j'ai analysé l'historique de recouvrement : taux de retard élevé, trésorerie faible, et retards de paiement côté fournisseurs",
+        "Cause identifiée : les relances clients étaient faites manuellement, une par une, sans vrai suivi",
+        "Action : paramétrage de relances automatiques adaptées au délai contractuel de chaque client (30, 45, 60 jours...), avec une alerte personnelle après 3 relances pour contacter le client directement",
+        "Résultat : taux de recouvrement nettement amélioré, trésorerie assainie, fournisseurs payés à temps, et même un excédent placé sur un compte à terme"
       ]
     },
     en: {
-      q: "Tell me about a cash or collections problem you managed.",
+      q: "Tell me about a time you improved a cash or collections situation.",
       a: [
-        "When I joined Wedocom, I analyzed the cash position and collections history: low recovery rate, thin cash, and late supplier payments",
-        "I found that client reminders were being sent manually, one by one, with no real tracking",
-        "I set up and activated automated reminders in our invoicing tool, timed to each client's contractual payment terms (30, 45, 45 end-of-month, 60 days) to avoid creating commercial friction",
-        "Past 3 reminders, I get a notification and contact the client personally to understand the blocker",
-        "Result: a clear drop in unpaid invoices, improved cash position, suppliers paid on time, and surplus cash placed in a term deposit account"
+        "When I joined, I analyzed the collections history: high late-payment rate, low cash, and delayed payments to suppliers as a result",
+        "Root cause: customer follow-ups were done manually, one by one, with no real tracking",
+        "Action: set up automated reminders matched to each client's contractual payment terms (30, 45, 60 days...), with a personal alert after 3 reminders to contact the client directly",
+        "Result: collections rate significantly improved, cash position healthier, suppliers paid on time, and even a cash surplus placed in a term deposit"
       ]
     }
   },
   {
-    id: "ex06",
+    id: "x06",
     fr: {
-      q: "Donnez-moi un exemple de collaboration avec un service autre que la finance.",
+      q: "Donnez-moi un exemple de collaboration étroite avec une autre équipe ou un autre service.",
       a: [
-        "Avec le commercial : suivi régulier pour comparer le forecast avec les chiffres réels",
+        "Avec les commerciaux : suivi de leurs objectifs, comparaison régulière du forecast avec les chiffres réels",
         "Avec les RH : calcul et validation des primes, budgétisation des nouveaux recrutements",
-        "Avec l'équipe opérationnelle : construction, avec la responsable, d'un fichier commun donnant une vision complète de l'activité (taux d'occupation, dépassement d'heures, fin de projet/renouvellement, rentabilité, potentiel de facturation), utile pour son suivi comme pour le mien",
-        "Avec la CEO : vision d'ensemble sur l'activité et les arbitrages transverses"
+        "Avec les opérations : construction d'un fichier commun de suivi (taux d'occupation, rentabilité des projets, dépassements d'heures, échéances de renouvellement) utile à leur pilotage comme au mien",
+        "Avec la direction générale : une vision financière consolidée de l'ensemble de l'activité"
       ]
     },
     en: {
-      q: "Give me an example of collaborating with a department outside finance.",
+      q: "Give me an example of close collaboration with another team or department.",
       a: [
-        "With sales: regular check-ins comparing forecast against actual figures",
+        "With Sales: tracking their targets, regularly comparing the forecast against actual figures",
         "With HR: calculating and validating bonuses, budgeting for new hires",
-        "With the operations team: built a shared file with the ops manager giving a full view of activity (occupancy rate, hours overrun, project end/renewal, profitability, billing potential), useful for her tracking as much as mine",
-        "With the CEO: overall visibility on the business and cross-functional trade-offs"
+        "With Operations: built a shared tracking file (utilization rate, project profitability, hour overruns, renewal deadlines) useful for both their steering and mine",
+        "With senior leadership: a consolidated financial view of the whole business"
       ]
     }
   }
