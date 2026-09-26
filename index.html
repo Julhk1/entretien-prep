@@ -37,7 +37,7 @@
         <span class="tile-label" data-i18n="tile1Label">Mode 1</span>
         <span class="tile-title" data-i18n="tile1Title">Entretien classique</span>
         <span class="tile-desc" data-i18n="tile1Desc">5 questions tirées au sort parmi les 19 questions clés d'un entretien RAF/DAF. Réponse de référence disponible pour chacune.</span>
-        <span class="tile-meta" id="tile1Meta">19 <span data-i18n="questionsWord">questions</span></span>
+        <span class="tile-meta" id="tile1Meta">25 <span data-i18n="questionsWord">questions</span></span>
       </button>
 
       <button class="tile tile-reflex" id="startGame2" type="button">
@@ -90,11 +90,15 @@
       <button class="back-btn" id="g1Back" type="button" aria-label="Retour">←</button>
       <span class="game-title" data-i18n="tile1Title">Entretien classique</span>
       <span class="game-progress" id="g1Progress">1 / 5</span>
+      <button class="trash-btn" id="g1Trash" type="button" aria-label="Réinitialiser la mémoire" title="Réinitialiser la mémoire">🗑</button>
     </div>
+
+    <p class="reflex-progress" id="g1SeenProgress"></p>
 
     <div class="dots" id="g1Dots" aria-hidden="true"></div>
 
     <div class="card question-card" id="g1Card">
+      <span class="cat-tag hidden" id="g1ExTag" data-i18n="exampleTag">Exemple à préparer</span>
       <p class="card-question" id="g1Question"></p>
       <button class="reveal-btn" id="g1RevealBtn" type="button" data-i18n="revealAnswer">Voir ma réponse</button>
       <ul class="answer-list hidden" id="g1AnswerList"></ul>
