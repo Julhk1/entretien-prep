@@ -11,7 +11,7 @@ const I18N = {
     homeSub: "Deux modes d'entraînement. Sur mobile, dans le bus, entre deux réunions.",
     tile1Label: "Mode 1",
     tile1Title: "Entretien classique",
-    tile1Desc: "5 questions par série : 4 tirées au sort parmi les 19 questions clés d'un entretien RAF/DAF, et 1 question \"donnez-moi un exemple\" tirée d'une banque de situations vécues. Réponse de référence disponible pour chacune.",
+    tile1Desc: "4 questions clés tirées au sort parmi les 19 questions d'entretien RAF/DAF, plus 1 exemple concret à raconter tiré de vos vraies expériences. Réponse de référence disponible pour chacune.",
     tile2Label: "Mode 2",
     tile2Title: "Réflexe",
     tile2Desc: "Une question à la fois, piochée dans une grande banque : technique, psychologique, mise en situation, management. Jamais deux fois la même question tant que vous n'avez pas remis le compteur à zéro.",
@@ -32,6 +32,7 @@ const I18N = {
     resetMemory: "Réinitialiser la mémoire",
     resetConfirm: "Effacer l'historique des questions déjà vues ? Vous les reverrez depuis le début.",
     seenOf: (seen, total) => `${seen} / ${total} questions déjà vues sur cet appareil`,
+    exampleTag: "Exemple à préparer",
     catLabels: {
       technique: "Technique finance",
       psycho: "Psychologique",
@@ -58,7 +59,7 @@ const I18N = {
     homeSub: "Two training modes. On your phone, on the bus, between meetings.",
     tile1Label: "Mode 1",
     tile1Title: "Classic interview",
-    tile1Desc: "5 questions per round: 4 drawn from the 19 core Finance Director interview questions, plus 1 \"give me an example\" question drawn from a bank of real situations. A reference answer is available for each.",
+    tile1Desc: "4 core questions drawn at random from the 19 key Finance Director interview questions, plus 1 concrete example to tell from your real experience. A reference answer is available for each.",
     tile2Label: "Mode 2",
     tile2Title: "Reflex",
     tile2Desc: "One question at a time, drawn from a large bank: technical, psychological, scenario-based, management. Never the same question twice until you reset the counter.",
@@ -79,6 +80,7 @@ const I18N = {
     resetMemory: "Reset memory",
     resetConfirm: "Clear the history of questions already seen? You'll see them again from the start.",
     seenOf: (seen, total) => `${seen} / ${total} questions already seen on this device`,
+    exampleTag: "Example to prepare",
     catLabels: {
       technique: "Finance technical",
       psycho: "Psychological",
@@ -133,6 +135,47 @@ const safeStorage = {
 
 let currentLang = safeStorage.getItem(STORAGE_LANG) || "fr";
 
+// ----------------------------------------------------------------
+// Mémoire "sans répétition" générique, séparée par langue.
+// Utilisée par les 3 modes : chaque langue a sa propre progression,
+// pour pouvoir s'entraîner séparément en FR et en EN sur la même banque.
+// ----------------------------------------------------------------
+function getSeenList(storageKey) {
+  try {
+    return JSON.parse(safeStorage.getItem(`${storageKey}_${currentLang}`)) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function setSeenList(storageKey, ids) {
+  safeStorage.setItem(`${storageKey}_${currentLang}`, JSON.stringify(ids));
+}
+
+function resetSeenList(storageKey) {
+  safeStorage.removeItem(`${storageKey}_${currentLang}`);
+}
+
+// Pioche n éléments jamais vus dans pool (mémorisé sous storageKey, pour la
+// langue courante). Dès que le stock d'éléments non-vus est épuisé, la
+// mémoire de ce pool est automatiquement remise à zéro et repart sur un
+// nouveau tour complet — jamais de répétition avant d'avoir tout vu.
+function pickUnseenBatch(pool, storageKey, n) {
+  let seen = getSeenList(storageKey);
+  let remaining = pool.filter(q => !seen.includes(q.id));
+  const batch = [];
+  while (batch.length < n && pool.length > 0) {
+    if (remaining.length === 0) {
+      seen = [];
+      remaining = pool.filter(q => !batch.some(b => b.id === q.id));
+    }
+    const idx = Math.floor(Math.random() * remaining.length);
+    batch.push(remaining.splice(idx, 1)[0]);
+  }
+  setSeenList(storageKey, [...new Set([...seen, ...batch.map(b => b.id)])]);
+  return batch;
+}
+
 function t(key) {
   return I18N[currentLang][key];
 }
@@ -145,7 +188,7 @@ function applyI18n() {
     if (typeof val === "string") el.textContent = val;
   });
   document.getElementById("tile1Meta").innerHTML =
-    `${STAR_QUESTIONS.length + EXAMPLE_QUESTIONS.length} <span>${t("questionsWord")}</span>`;
+    `${STAR_QUESTIONS.length + STAR_EXAMPLES.length} <span>${t("questionsWord")}</span>`;
   renderReflexMeta();
   renderTile3Meta();
   // Refresh whichever game view is currently visible, so labels/content re-render in the new language
@@ -176,6 +219,9 @@ document.getElementById("langToggle").addEventListener("click", () => {
 // ================================================================
 // JEU 1 — Entretien classique
 // ================================================================
+const STORAGE_G1_CLASSIC = "ip_g1_seen_classic";
+const STORAGE_G1_EXAMPLE = "ip_g1_seen_example";
+
 let g1Set = [];
 let g1Index = 0;
 
@@ -190,11 +236,9 @@ function pickRandom(arr, n) {
 }
 
 function startGame1() {
-  const classicPicks = pickRandom(STAR_QUESTIONS, 4);
-  const examplePick = pickRandom(EXAMPLE_QUESTIONS, 1);
-  // pickRandom sur l'ensemble complet mélange aussi l'ordre des 5 questions,
-  // pour que la question "exemple" ne tombe pas toujours au même endroit.
-  g1Set = pickRandom(classicPicks.concat(examplePick), 5);
+  const four = pickUnseenBatch(STAR_QUESTIONS, STORAGE_G1_CLASSIC, 4);
+  const oneExample = pickUnseenBatch(STAR_EXAMPLES, STORAGE_G1_EXAMPLE, 1);
+  g1Set = pickRandom([...four, ...oneExample], 5); // shuffle so the example isn't always last
   g1Index = 0;
   showView("view-game1");
   renderG1Question();
@@ -210,9 +254,21 @@ function renderG1Dots() {
   });
 }
 
+function renderG1SeenProgress() {
+  const seenClassic = getSeenList(STORAGE_G1_CLASSIC).length;
+  const seenExample = getSeenList(STORAGE_G1_EXAMPLE).length;
+  const total = STAR_QUESTIONS.length + STAR_EXAMPLES.length;
+  document.getElementById("g1SeenProgress").textContent =
+    t("seenOf")(seenClassic + seenExample, total);
+}
+
 function renderG1Question() {
   const item = g1Set[g1Index];
   document.getElementById("g1Progress").textContent = `${g1Index + 1} / ${g1Set.length}`;
+  const exTag = document.getElementById("g1ExTag");
+  const isExample = item.id.startsWith("x");
+  exTag.textContent = t("exampleTag");
+  exTag.classList.toggle("hidden", !isExample);
   document.getElementById("g1Question").textContent = item[currentLang].q;
   const list = document.getElementById("g1AnswerList");
   list.innerHTML = "";
@@ -224,6 +280,7 @@ function renderG1Question() {
   list.classList.add("hidden");
   document.getElementById("g1RevealBtn").textContent = t("revealAnswer");
   renderG1Dots();
+  renderG1SeenProgress();
 }
 
 document.getElementById("g1RevealBtn").addEventListener("click", () => {
@@ -248,29 +305,33 @@ document.getElementById("g1Home").addEventListener("click", () => showView("view
 document.getElementById("g1Back").addEventListener("click", () => showView("view-home"));
 document.getElementById("startGame1").addEventListener("click", startGame1);
 
+document.getElementById("g1Trash").addEventListener("click", () => {
+  if (confirm(t("resetConfirm"))) {
+    resetSeenList(STORAGE_G1_CLASSIC);
+    resetSeenList(STORAGE_G1_EXAMPLE);
+    renderG1SeenProgress();
+  }
+});
+
 // ================================================================
 // JEU 2 — Réflexe
 // ================================================================
 let g2Current = null;
 
 function getSeenIds() {
-  try {
-    return JSON.parse(safeStorage.getItem(STORAGE_REFLEX_SEEN)) || [];
-  } catch (e) {
-    return [];
-  }
+  return getSeenList(STORAGE_REFLEX_SEEN);
 }
 
 function addSeenId(id) {
   const seen = getSeenIds();
   if (!seen.includes(id)) {
     seen.push(id);
-    localStorage.setItem(STORAGE_REFLEX_SEEN, JSON.stringify(seen));
+    setSeenList(STORAGE_REFLEX_SEEN, seen);
   }
 }
 
 function resetSeen() {
-  localStorage.removeItem(STORAGE_REFLEX_SEEN);
+  resetSeenList(STORAGE_REFLEX_SEEN);
 }
 
 function renderReflexMeta() {
@@ -365,23 +426,19 @@ function getPersonaBank(persona) {
 }
 
 function getPersonaSeenIds(persona) {
-  try {
-    return JSON.parse(safeStorage.getItem(personaStorageKey(persona))) || [];
-  } catch (e) {
-    return [];
-  }
+  return getSeenList(personaStorageKey(persona));
 }
 
 function addPersonaSeenId(persona, id) {
   const seen = getPersonaSeenIds(persona);
   if (!seen.includes(id)) {
     seen.push(id);
-    safeStorage.setItem(personaStorageKey(persona), JSON.stringify(seen));
+    setSeenList(personaStorageKey(persona), seen);
   }
 }
 
 function resetPersonaSeen(persona) {
-  safeStorage.removeItem(personaStorageKey(persona));
+  resetSeenList(personaStorageKey(persona));
 }
 
 function renderTile3Meta() {
