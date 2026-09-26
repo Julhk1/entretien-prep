@@ -22,6 +22,8 @@ const I18N = {
     revealExample: "Voir un exemple de réponse",
     hideExample: "Masquer l'exemple",
     nextQuestion: "Question suivante",
+    validateNext: "✓ C'est bon, suivante",
+    skipNoSave: "Suivant sans enregistrer",
     stopHere: "M'arrêter là",
     playAgain: "Rejouer",
     backHome: "Retour à l'accueil",
@@ -70,6 +72,8 @@ const I18N = {
     revealExample: "See an example answer",
     hideExample: "Hide example",
     nextQuestion: "Next question",
+    validateNext: "✓ Got it, next",
+    skipNoSave: "Skip without saving",
     stopHere: "Stop here",
     playAgain: "Play again",
     backHome: "Back to home",
@@ -156,23 +160,31 @@ function resetSeenList(storageKey) {
   safeStorage.removeItem(`${storageKey}_${currentLang}`);
 }
 
+function markSeen(storageKey, id) {
+  const seen = getSeenList(storageKey);
+  if (!seen.includes(id)) {
+    seen.push(id);
+    setSeenList(storageKey, seen);
+  }
+}
+
 // Pioche n éléments jamais vus dans pool (mémorisé sous storageKey, pour la
-// langue courante). Dès que le stock d'éléments non-vus est épuisé, la
-// mémoire de ce pool est automatiquement remise à zéro et repart sur un
-// nouveau tour complet — jamais de répétition avant d'avoir tout vu.
+// langue courante). Ne marque RIEN comme vu — c'est au code appelant de
+// confirmer explicitement (bouton "C'est bon") via markSeen(). Dès que le
+// stock d'éléments non-vus est épuisé, un nouveau tour complet redémarre
+// localement pour cette pioche — jamais de répétition avant d'avoir tout
+// confirmé une fois.
 function pickUnseenBatch(pool, storageKey, n) {
-  let seen = getSeenList(storageKey);
+  const seen = getSeenList(storageKey);
   let remaining = pool.filter(q => !seen.includes(q.id));
   const batch = [];
   while (batch.length < n && pool.length > 0) {
     if (remaining.length === 0) {
-      seen = [];
       remaining = pool.filter(q => !batch.some(b => b.id === q.id));
     }
     const idx = Math.floor(Math.random() * remaining.length);
     batch.push(remaining.splice(idx, 1)[0]);
   }
-  setSeenList(storageKey, [...new Set([...seen, ...batch.map(b => b.id)])]);
   return batch;
 }
 
@@ -291,14 +303,23 @@ document.getElementById("g1RevealBtn").addEventListener("click", () => {
   btn.textContent = isHidden ? t("hideAnswer") : t("revealAnswer");
 });
 
-document.getElementById("g1Next").addEventListener("click", () => {
+function advanceG1() {
   g1Index++;
   if (g1Index >= g1Set.length) {
     showView("view-game1-end");
   } else {
     renderG1Question();
   }
+}
+
+document.getElementById("g1ValidateNext").addEventListener("click", () => {
+  const item = g1Set[g1Index];
+  const key = item.id.startsWith("x") ? STORAGE_G1_EXAMPLE : STORAGE_G1_CLASSIC;
+  markSeen(key, item.id);
+  advanceG1();
 });
+
+document.getElementById("g1SkipNext").addEventListener("click", advanceG1);
 
 document.getElementById("g1Restart").addEventListener("click", startGame1);
 document.getElementById("g1Home").addEventListener("click", () => showView("view-home"));
@@ -340,10 +361,13 @@ function renderReflexMeta() {
     `${total} <span>${t("questionsWord")}</span>`;
 }
 
-function pickNextReflexQuestion() {
+function pickNextReflexQuestion(excludeId) {
   const seen = getSeenIds();
-  const remaining = REFLEX_QUESTIONS.filter(q => !seen.includes(q.id));
+  let remaining = REFLEX_QUESTIONS.filter(q => !seen.includes(q.id));
   if (remaining.length === 0) return null;
+  if (excludeId && remaining.length > 1) {
+    remaining = remaining.filter(q => q.id !== excludeId);
+  }
   return remaining[Math.floor(Math.random() * remaining.length)];
 }
 
@@ -366,19 +390,18 @@ function renderG2Question() {
   renderG2Progress();
 }
 
-function startGame2() {
-  const next = pickNextReflexQuestion();
+function startGame2(excludeId) {
+  const next = pickNextReflexQuestion(excludeId);
   if (!next) {
     showView("view-game2-empty");
     return;
   }
   g2Current = next;
-  addSeenId(next.id);
   showView("view-game2");
   renderG2Question();
 }
 
-document.getElementById("startGame2").addEventListener("click", startGame2);
+document.getElementById("startGame2").addEventListener("click", () => startGame2());
 document.getElementById("g2Back").addEventListener("click", () => showView("view-home"));
 document.getElementById("g2Stop").addEventListener("click", () => showView("view-home"));
 
@@ -390,7 +413,15 @@ document.getElementById("g2RevealBtn").addEventListener("click", () => {
   btn.textContent = isHidden ? t("hideExample") : t("revealExample");
 });
 
-document.getElementById("g2Next").addEventListener("click", startGame2);
+document.getElementById("g2ValidateNext").addEventListener("click", () => {
+  const currentId = g2Current ? g2Current.id : null;
+  if (currentId) addSeenId(currentId);
+  startGame2(currentId);
+});
+
+document.getElementById("g2SkipNext").addEventListener("click", () => {
+  startGame2(g2Current ? g2Current.id : null);
+});
 
 document.getElementById("g2Trash").addEventListener("click", () => {
   if (confirm(t("resetConfirm"))) {
@@ -450,11 +481,14 @@ function openPersonaSelect() {
   showView("view-persona-select");
 }
 
-function pickNextPersonaQuestion(persona) {
+function pickNextPersonaQuestion(persona, excludeId) {
   const bank = getPersonaBank(persona);
   const seen = getPersonaSeenIds(persona);
-  const remaining = bank.filter(q => !seen.includes(q.id));
+  let remaining = bank.filter(q => !seen.includes(q.id));
   if (remaining.length === 0) return null;
+  if (excludeId && remaining.length > 1) {
+    remaining = remaining.filter(q => q.id !== excludeId);
+  }
   return remaining[Math.floor(Math.random() * remaining.length)];
 }
 
@@ -478,16 +512,15 @@ function renderG3Question() {
   renderG3Progress();
 }
 
-function startGame3(persona) {
+function startGame3(persona, excludeId) {
   currentPersona = persona;
-  const next = pickNextPersonaQuestion(persona);
+  const next = pickNextPersonaQuestion(persona, excludeId);
   if (!next) {
     document.getElementById("g3Title").textContent = t("personaLabels")[currentPersona];
     showView("view-game3-empty");
     return;
   }
   g3Current = next;
-  addPersonaSeenId(persona, next.id);
   showView("view-game3");
   renderG3Question();
 }
@@ -509,7 +542,15 @@ document.getElementById("g3RevealBtn").addEventListener("click", () => {
   btn.textContent = isHidden ? t("hideExample") : t("revealExample");
 });
 
-document.getElementById("g3Next").addEventListener("click", () => startGame3(currentPersona));
+document.getElementById("g3ValidateNext").addEventListener("click", () => {
+  const currentId = g3Current ? g3Current.id : null;
+  if (currentId) addPersonaSeenId(currentPersona, currentId);
+  startGame3(currentPersona, currentId);
+});
+
+document.getElementById("g3SkipNext").addEventListener("click", () => {
+  startGame3(currentPersona, g3Current ? g3Current.id : null);
+});
 
 document.getElementById("g3Trash").addEventListener("click", () => {
   if (confirm(t("resetConfirm"))) {
